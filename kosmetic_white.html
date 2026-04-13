@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kosmetic AR — Profesionales del Cabello</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:        #000000;
+    --ink2:       #bababa;
+    --accent:     #FD7D01;
+    --accent-lt:  #00ba91;
+    --accent-pale:#F5EFE6;
+    --white:      #FFFFFF;
+    --off:        #F8F7F5;
+    --surface:    #F2F0EC;
+    --border:     rgba(26,26,26,.1);
+    --border-soft:rgba(26,26,26,.06);
+    --gray:       #888888;
+    --gray-lt:    #BBBBBB;
+    --glass-bg:   rgba(255,255,255,.72);
+    --glass-border:rgba(255,255,255,.6);
+  }
+s
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+
+  p { font-size:14px !important; font-family: "Josefin Sans", sans-serif !important; }
+
+  body {
+    background: var(--white);
+    color: var(--ink);
+    font-family: "Josefin Sans", sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── CURSOR ── */
+  .cursor {
+    position: fixed; width:10px; height:10px;
+    background: var(--ink); border-radius:50%;
+    pointer-events:none; z-index:9999;
+    transform:translate(-50%,-50%);
+    transition: width .3s, height .3s;
+    mix-blend-mode: multiply;
+  }
+  .cursor-ring {
+    position: fixed; width:34px; height:34px;
+    border: 1px solid var(--accent);
+    border-radius:50%; pointer-events:none; z-index:9998;
+    transform:translate(-50%,-50%);
+    transition: all .25s ease; opacity:.6;
+  }
+
+  ::-webkit-scrollbar { width:3px; }
+  ::-webkit-scrollbar-track { background:var(--off); }
+  ::-webkit-scrollbar-thumb { background:var(--accent); }
+
+
+  /* ── NAV ── */
+  nav {
+    position:fixed; top:0; left:0; right:0; z-index:1000;
+    padding:20px 60px;
+    display:flex; align-items:center; justify-content:space-between;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px) saturate(1.8);
+    -webkit-backdrop-filter: blur(20px) saturate(1.8);
+    border-bottom: 1px solid var(--glass-border);
+    transition: all .4s;
+  }
+  nav.scrolled {
+    padding:14px 60px;
+    background: rgba(255,255,255,.9);
+    border-bottom-color: var(--border);
+    box-shadow: 0 2px 40px rgba(0,0,0,.06);
+  }
+
+  .nav-logo { display:flex; flex-direction:column; line-height:1; }
+  .nav-logo .brand {
+    font-family: "Josefin Sans", sans-serif;
+    font-size:26px; font-weight:300; letter-spacing:8px;
+    color:var(--ink); text-transform:uppercase;
+  }
+  .nav-logo .sub {
+    font-size:15px; letter-spacing:5px; color:var(--accent);
+    text-transform:uppercase; margin-top:2px;
+  }
+
+  .nav-logo-img{
+    max-width: 200px;
+  }
+
+  .nav-links { display:flex; gap:36px; list-style:none; }
+  .nav-links a {
+    font-size:14px; letter-spacing:3px; text-transform:uppercase;
+    color:var(--gray); text-decoration:none;
+    position:relative; transition:color .3s;
+  }
+  .nav-links a::after {
+    content:''; position:absolute; bottom:-4px; left:0;
+    width:0; height:1px; background:var(--accent);
+    transition:width .3s;
+  }
+  .nav-links a:hover { color:var(--ink); }
+  .nav-links a:hover::after { width:100%; }
+
+  .nav-cta {
+    font-size:14px; letter-spacing:3px; text-transform:uppercase;
+    color:var(--white); background:var(--ink);
+    padding:11px 26px; text-decoration:none;
+    transition:background .3s;
+  }
+  .nav-cta:hover { background:var(--ink2); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height:100vh;
+    display:flex; align-items:center;
+    position:relative; overflow:hidden;
+    padding:0 60px;
+    background: var(--white);
+  }
+  
+
+  .hero-orb-1 {
+    position:absolute; width:700px; height:700px;
+    border-radius:50%; top:-200px; right:-100px;
+    background: radial-gradient(circle, rgba(196,168,130,.12) 0%, transparent 70%);
+    pointer-events:none;
+  }
+  .hero-orb-2 {
+    position:absolute; width:400px; height:400px;
+    border-radius:50%; bottom:-100px; left:30%;
+    background: radial-gradient(circle, rgba(196,168,130,.07) 0%, transparent 70%);
+    pointer-events:none;
+  }
+  .hero-dots {
+    position:absolute; inset:0;
+    background-image: radial-gradient(circle, rgba(26,26,26,.06) 1px, transparent 1px);
+    background-size:40px 40px;
+    opacity:.8;
+  }
+
+  /* floating glass pill */
+  .hero-pill {
+    position:absolute; top:100px; right:80px;
+    background: var(--glass-bg);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    border:1px solid var(--glass-border);
+    border-radius:100px;
+    padding:12px 24px;
+    font-size:12px; letter-spacing:3px;
+    text-transform:uppercase; color:var(--accent);
+    box-shadow: 0 8px 32px rgba(0,0,0,.06);
+    animation: floatPill 4s ease-in-out infinite;
+    z-index:3;
+  }
+  @keyframes floatPill { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+  .hero-content { position:relative; z-index:2; max-width:720px; }
+
+  .hero-tag {
+    font-size:12px; letter-spacing:5px; color:var(--accent);
+    text-transform:uppercase; margin-bottom:32px;
+    display:flex; align-items:center; gap:16px;
+    animation: fadeInLeft .8s .2s both;
+  }
+  .hero-tag::before { content:''; width:36px; height:1px; background:var(--accent); }
+
+  .hero-title {
+    font-family:'Josefin Sans', Josefin Sans, serif;
+    font-size:clamp(60px,8vw,110px);
+    font-weight:300; line-height:.95;
+    color:var(--ink); letter-spacing:-2px;
+    animation: fadeInLeft .8s .4s both;
+  }
+  .hero-title em { font-style:italic; color:var(--accent); display:block; }
+  .hero-title span {
+    display:block; font-size:.42em; font-weight:200;
+    letter-spacing:12px; text-transform:uppercase;
+    color:var(--gray-lt); margin-top:10px;
+    font-family: "Josefin Sans", sans-serif;
+  }
+
+  .hero-desc {
+    margin-top:32px; font-size:14px; line-height:1.9;
+    color:var(--gray); max-width:440px; font-weight:300; font-family: "Josefin Sans", sans-serif;
+    animation: fadeInLeft .8s .6s both;
+  }
+
+  .hero-actions {
+    margin-top:48px; display:flex; gap:20px; align-items:center;
+    animation: fadeInLeft .8s .8s both;
+  }
+  .btn-primary {
+    font-size:14px; letter-spacing:3px; text-transform:uppercase;
+    color:var(--white); background:var(--ink);
+    padding:17px 38px; text-decoration:none;
+    transition:all .3s; display:inline-block;
+    position:relative; overflow:hidden;
+  }
+  .btn-primary::before {
+    content:''; position:absolute; top:0; left:-100%;
+    width:100%; height:100%; background:rgba(196,168,130,.25);
+    transition:left .3s;
+  }
+  .btn-primary:hover::before { left:0; }
+  .btn-secondary {
+    font-size:14px; letter-spacing:3px; text-transform:uppercase;
+    color:var(--ink); text-decoration:none;
+    display:flex; align-items:center; gap:12px;
+    transition:gap .3s;
+    border-bottom:1px solid var(--accent); padding-bottom:2px;
+  }
+  .btn-secondary:hover { gap:20px; }
+
+  .hero-side {
+    position:absolute; right:60px; top:50%;
+    transform:translateY(-50%);
+    display:flex; flex-direction:column; align-items:center; gap:50px;
+    z-index:2; animation: fadeInRight .8s 1s both;
+  }
+  .hero-side-line { width:1px; height:100px; background:linear-gradient(to bottom, transparent, var(--accent), transparent); }
+  .hero-side-text {
+    font-size:12px; letter-spacing:4px; color:var(--gray-lt);
+    text-transform:uppercase; writing-mode:vertical-rl;
+  }
+
+  /* ── MARQUEE ── */
+  .marquee-section {
+    overflow:hidden; padding:20px 0;
+    border-top:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+    background:var(--off);
+  }
+  .marquee-track {
+    display:flex; animation:marquee 22s linear infinite;
+    white-space:nowrap;
+  }
+  .marquee-item {   
+    font-family: "Josefin Sans", sans-serif;
+    font-size:17px; font-weight:300; font-style:italic;
+    color:var(--ink); padding:0 36px;
+    display:flex; align-items:center; gap:36px;
+  }
+  .marquee-item span { color:var(--accent); font-style:normal; font-size:9px; }
+  @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+  /* ── SECTION BASE ── */
+  section { padding:120px 60px; }
+
+  .section-tag {
+    font-size:12px; letter-spacing:5px; color:var(--accent);
+    text-transform:uppercase; margin-bottom:20px;
+    display:flex; align-items:center; gap:14px;
+  }
+  .section-tag::before { content:''; width:28px; height:1px; background:var(--accent); }
+  .section-title {
+     font-family: "Josefin Sans", sans-serif;
+     font-size:clamp(38px,5vw,66px);
+    font-weight:300; line-height:1.05; color:var(--ink);
+  }
+  .section-title em { font-style:italic; color:var(--accent); }
+
+  /* ── ABOUT ── */
+  .about { display:grid; grid-template-columns:1fr 1fr; gap:100px; align-items:center; }
+
+  .about-visual { position:relative; aspect-ratio:3/4; }
+  .about-frame {
+    position:absolute; inset:0;
+    background:var(--surface);
+    border:1px solid var(--border);
+    overflow:hidden;
+  }
+  .about-frame::before {
+    content:'K'; position:absolute;
+    font-family: "Josefin Sans", sans-serif;
+    font-size:380px; font-weight:300;
+    color:rgba(196,168,130,.1);
+    top:50%; left:50%; transform:translate(-50%,-50%);
+    line-height:1;
+  }
+
+  /* glass badge */
+  .about-badge {
+    position:absolute; bottom:-20px; right:-20px;
+    background: var(--glass-bg);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    border:1px solid var(--glass-border);
+    box-shadow:0 12px 40px rgba(0,0,0,.1);
+    width:140px; height:140px;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+  }
+  .about-badge .num {
+    font-family: "Josefin Sans", sans-serif;
+    font-size:46px; font-weight:300; color:var(--accent); line-height:1;
+  }
+  .about-badge .txt {
+    font-size:12px; letter-spacing:2px; color:var(--gray);
+    text-transform:uppercase; text-align:center; line-height:1.5;
+  }
+  .about-decoration {
+    position:absolute; top:-16px; left:-16px;
+    width:54px; height:54px;
+    border-top:2px solid var(--accent); border-left:2px solid var(--accent);
+  }
+  .about-decoration-br {
+    position:absolute; bottom:60px; right:-16px;
+    width:36px; height:36px;
+    border-bottom:2px solid var(--accent); border-right:2px solid var(--accent);
+  }
+  .about-inner-grid {
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(26,26,26,.03) 1px, transparent 1px),
+      linear-gradient(90deg,rgba(26,26,26,.03) 1px, transparent 1px);
+    background-size:40px 40px;
+  }
+
+  .about-text .section-title { margin-bottom:28px; }
+  .about-text p { font-size:13px; line-height:1.9; color:var(--gray); font-weight:300; margin-bottom:18px; }
+
+  .about-stats {
+    display:grid; grid-template-columns:1fr 1fr; gap:28px;
+    margin-top:48px; padding-top:48px;
+    border-top:1px solid var(--border);
+  }
+  .stat-num {
+     font-family: "Josefin Sans", sans-serif;
+    font-size:46px; font-weight:300; color:var(--accent); line-height:1;
+  }
+  .stat-label { font-size:12px; letter-spacing:2px; color:var(--gray); text-transform:uppercase; margin-top:4px; }
+
+  /* ── PRODUCTS ── */
+  .products { background:var(--off); }
+  .products-header { text-align:center; margin-bottom:80px; }
+  .products-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:3px; }
+
+  .product-card {
+    position:relative; aspect-ratio:3/4;
+    background:var(--surface); overflow:hidden; cursor:none;
+  }
+  .product-card:nth-child(2) { margin-top:40px; }
+  .product-card:nth-child(3) { margin-top:-40px; }
+
+  .product-bg {
+    position:absolute; inset:0;
+    transition:transform .6s cubic-bezier(.25,.46,.45,.94);
+  }
+  .product-card:hover .product-bg { transform:scale(1.04); }
+
+  .prod-1 .product-bg { background:linear-gradient(155deg,#F0ECE6 0%,#E4DDD3 100%); }
+  .prod-2 .product-bg { background:linear-gradient(155deg,#EEECE8 0%,#E2DDD6 100%); }
+  .prod-3 .product-bg { background:linear-gradient(155deg,#F2EFE9 0%,#E7E1D8 100%); }
+
+  .product-icon {
+    position:absolute; top:50%; left:50%;
+    transform:translate(-50%,-62%);
+     font-family: "Josefin Sans", sans-serif;    font-size:120px; font-weight:300;
+    color:rgba(196,168,130,.18); line-height:1;
+    transition:transform .6s, color .6s;
+  }
+  .product-card:hover .product-icon { transform:translate(-50%,-56%); color:rgba(196,168,130,.28); }
+
+  .product-shape {
+    position:absolute; top:30%; left:50%;
+    transform:translate(-50%,-50%);
+    width:130px; height:190px;
+    border:1px solid rgba(196,168,130,.25);
+    transition:all .5s;
+  }
+  .product-card:hover .product-shape { border-color:rgba(196,168,130,.5); }
+
+  /* glass info overlay */
+  .product-info {
+    position:absolute; bottom:0; left:0; right:0;
+    padding:28px;
+    background: rgba(255,255,255,.75);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    border-top:1px solid rgba(255,255,255,.6);
+    transform:translateY(100%);
+    transition:transform .4s cubic-bezier(.25,.46,.45,.94);
+  }
+  .product-card:hover .product-info { transform:translateY(0); }
+
+  .product-cat { font-size:12px; letter-spacing:4px; color:var(--accent); text-transform:uppercase; margin-bottom:6px; }
+  .product-name { font-family:'Cormorant Garamond',serif; font-size:26px; font-weight:300; color:var(--ink); }
+  .product-desc { font-size:14px; color:var(--gray); line-height:1.7; margin-top:8px; font-weight:300; font-family: "Josefin Sans", sans-serif; }
+
+  .product-num {
+    position:absolute; top:20px; left:20px;
+     font-family: "Josefin Sans", sans-serif;
+     font-size:44px; font-weight:300;
+    color:rgba(196,168,130,.2); line-height:1;
+  }
+  .product-line {
+    position:absolute; top:20px; right:20px;
+    width:1px; height:36px;
+    background:linear-gradient(to bottom, var(--accent), transparent);
+  }
+
+  /* ── AUDIENCE ── */
+  .audience { background:var(--white); position:relative; overflow:hidden; }
+  .audience-orb {
+    position:absolute; width:600px; height:600px;
+    border-radius:50%; top:50%; left:50%; transform:translate(-50%,-50%);
+    background:radial-gradient(circle, rgba(196,168,130,.07) 0%, transparent 70%);
+    pointer-events:none;
+  }
+  .audience-title { text-align:center; margin-bottom:80px; }
+  .audience-grid {
+    display:grid; grid-template-columns:repeat(3,1fr); gap:2px;
+    max-width:1000px; margin:0 auto;
+  }
+
+  .audience-card {
+    padding:56px 36px; background:var(--off);
+    position:relative; overflow:hidden;
+    transition:background .4s;
+  }
+  .audience-card:hover { background:var(--surface); }
+  .audience-card::before {
+    content:''; position:absolute; top:0; left:0; right:0;
+    height:2px; background:var(--accent);
+    transform:scaleX(0); transition:transform .4s;
+    transform-origin:left;
+  }
+  .audience-card:hover::before { transform:scaleX(1); }
+
+  .audience-icon { font-size:36px; margin-bottom:24px; }
+  .audience-name {
+    font-family:'Cormorant Garamond',serif;
+    font-size:26px; font-weight:300; color:var(--ink); margin-bottom:14px;
+  }
+  .audience-desc { font-size:14px; line-height:1.8; color:var(--gray); font-weight:300; font-family: "Josefin Sans", sans-serif; }
+  .audience-arrow {
+    position:absolute; bottom:28px; right:28px;
+    color:var(--accent); font-size:18px;
+    transform:translateX(-8px); opacity:0;
+    transition:all .4s;
+  }
+  .audience-card:hover .audience-arrow { transform:translateX(0); opacity:1; }
+
+  /* ── FEATURES ── */
+  .features { background:var(--off); }
+  .features-inner { display:grid; grid-template-columns:1fr 1fr; gap:100px; align-items:center; }
+
+  .features-list { display:flex; flex-direction:column; gap:0; }
+  .feature-item {
+    padding:30px 0; border-bottom:1px solid var(--border);
+    display:flex; gap:22px; align-items:flex-start;
+    cursor:none; transition:padding-left .3s;
+  }
+  .feature-item:hover { padding-left:14px; }
+  .feature-num {
+    font-family:'Cormorant Garamond',serif;
+    font-size:34px; font-weight:300; color:rgba(196,168,130,.4);
+    line-height:1; min-width:44px; transition:color .3s;
+  }
+  .feature-item:hover .feature-num { color:var(--accent); }
+  .feature-title { font-size:14px; font-weight:500; color:var(--ink); margin-bottom:6px; letter-spacing:.5px; }
+  .feature-text { font-size:14px; line-height:1.8; color:var(--gray); font-weight:300; font-family: "Josefin Sans", sans-serif; }
+
+  .features-visual {
+    position:relative; aspect-ratio:1;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .features-circle {
+    width:280px; height:280px; border-radius:50%;
+    border:1px solid rgba(196,168,130,.2);
+    position:absolute;
+    animation:spinSlow 22s linear infinite;
+  }
+  .features-circle:nth-child(2) {
+    width:200px; height:200px;
+    border-color:rgba(196,168,130,.14);
+    animation-direction:reverse; animation-duration:16s;
+  }
+  .features-circle:nth-child(3) {
+    width:360px; height:360px;
+    border-color:rgba(196,168,130,.08);
+    animation-duration:32s;
+  }
+
+  /* glass center badge */
+  .features-logo-wrap {
+    position:relative; z-index:2;
+    background: var(--glass-bg);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    border:1px solid var(--glass-border);
+    box-shadow:0 8px 32px rgba(0,0,0,.08);
+    width:100px; height:100px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .features-logo {
+     font-family: "Josefin Sans", sans-serif;
+         font-size:36px; font-weight:300; color:var(--accent);
+    letter-spacing:-1px;
+  }
+  .features-dot {
+    position:absolute; width:6px; height:6px;
+    background:var(--accent); border-radius:50%;
+  }
+  .fd1 { top:0; left:50%; transform:translateX(-50%); }
+  .fd2 { top:50%; right:0; transform:translateY(-50%); }
+  .fd3 { bottom:0; left:50%; transform:translateX(-50%); }
+  .fd4 { top:50%; left:0; transform:translateY(-50%); }
+
+  @keyframes spinSlow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+  /* ── TESTIMONIALS ── */
+  .testimonials { padding:120px 0; overflow:hidden; position:relative; background:var(--white); }
+  .testimonials-header { text-align:center; margin-bottom:80px; padding:0 60px; }
+
+  .test-track {
+    display:flex; gap:3px;
+    animation:slideTestimonials 32s linear infinite;
+    width:max-content;
+  }
+  .test-track:hover { animation-play-state:paused; }
+  @keyframes slideTestimonials { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+  .test-card {
+    width:390px; padding:44px;
+    background:var(--off); flex-shrink:0;
+    border-left:2px solid transparent;
+    transition:border-color .3s, background .3s;
+    position:relative;
+  }
+  /* glass shimmer on hover */
+  .test-card:hover {
+    border-color:var(--accent);
+    background: rgba(245,239,230,.85);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+  }
+  .test-quote {
+     font-family: "Josefin Sans", sans-serif;
+         font-size:17px; font-weight:300; font-style:italic;
+    color:var(--ink); line-height:1.7; margin-bottom:28px;
+  }
+  .test-author { display:flex; align-items:center; gap:14px; }
+  .test-avatar {
+    width:42px; height:42px; border-radius:50%;
+    background:var(--accent-pale); border:1px solid var(--accent-lt);
+    display:flex; align-items:center; justify-content:center;
+   font-family: "Josefin Sans", sans-serif;
+    font-size:17px; font-weight:300; color:var(--accent);
+  }
+  .test-name { font-size:12px; font-weight:500; color:var(--ink); }
+  .test-role { font-size:9px; letter-spacing:2px; color:var(--accent); text-transform:uppercase; margin-top:2px; }
+  .test-stars { margin-bottom:14px; color:var(--accent); font-size:11px; letter-spacing:3px; }
+
+  /* ── CATEGORIES ── */
+  .categories { padding:80px 60px; background:var(--off); }
+  .categories-title { text-align:center; margin-bottom:60px; }
+  .cat-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:2px; }
+
+  .cat-item {
+    padding:36px 16px; text-align:center;
+    background:var(--white);
+    transition:background .3s, transform .3s, box-shadow .3s;
+    cursor:none; position:relative; overflow:hidden;
+  }
+  .cat-item:hover {
+    background:var(--glass-bg);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    transform:translateY(-4px);
+    box-shadow:0 12px 32px rgba(0,0,0,.08);
+  }
+  .cat-emoji { font-size:30px; margin-bottom:14px; display:block; }
+  .cat-name {
+    font-size:9px; letter-spacing:2px; color:var(--gray);
+    text-transform:uppercase; font-weight:500;
+    transition:color .3s;
+  }
+  .cat-item:hover .cat-name { color:var(--accent); }
+
+  /* ── CTA ── */
+  .cta-section {
+    padding:140px 60px; text-align:center;
+    position:relative; overflow:hidden;
+    background:var(--ink);
+  }
+  /* big glass orb */
+  .cta-orb {
+    position:absolute; width:800px; height:800px;
+    border-radius:50%; top:50%; left:50%; transform:translate(-50%,-50%);
+    background:radial-gradient(circle, rgba(196,168,130,.12) 0%, transparent 65%);
+    pointer-events:none;
+  }
+  .cta-dots {
+    position:absolute; inset:0;
+    background-image:radial-gradient(circle, rgba(255,255,255,.06) 1px, transparent 1px);
+    background-size:40px 40px;
+  }
+  .cta-section .section-tag { justify-content:center; color:var(--accent-lt); }
+  .cta-section .section-tag::before { background:var(--accent-lt); }
+  .cta-section .section-title {
+    font-size:clamp(46px,6vw,88px);
+    position:relative; z-index:2; margin-bottom:28px;
+    color:var(--white);
+  }
+  .cta-section .section-title em { color:var(--accent-lt); }
+  .cta-section p {
+    font-size:13px; color:rgba(255,255,255,.5); max-width:480px; margin:0 auto 48px;
+    line-height:1.9; font-weight:300; position:relative; z-index:2;
+  }
+  .cta-buttons {
+    display:flex; gap:20px; justify-content:center;
+    position:relative; z-index:2;
+  }
+  .btn-primary-inv {
+    font-size:10px; letter-spacing:3px; text-transform:uppercase;
+    color:var(--ink); background:var(--white);
+    padding:17px 38px; text-decoration:none;
+    transition:all .3s; display:inline-block;
+  }
+  .btn-primary-inv:hover { background:var(--accent-pale); }
+  .btn-outline-inv {
+    font-size:10px; letter-spacing:3px; text-transform:uppercase;
+    color:var(--accent-lt); border:1px solid rgba(196,168,130,.4);
+    padding:17px 38px; text-decoration:none;
+    transition:all .3s;
+    background: rgba(255,255,255,.05);
+    backdrop-filter:blur(8px);
+  }
+  .btn-outline-inv:hover { border-color:var(--accent-lt); background:rgba(196,168,130,.1); }
+
+  /* ── FOOTER ── */
+  footer {
+    background:var(--off); padding:80px 60px 40px;
+    border-top:1px solid var(--border);
+  }
+  .footer-grid {
+    display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:60px;
+    margin-bottom:60px;
+  }
+  .footer-brand .brand-name {
+  font-family: "Josefin Sans", sans-serif;
+    font-size:34px; font-weight:300; letter-spacing:6px;
+    color:var(--ink); margin-bottom:4px;
+  }
+  .footer-brand .brand-sub { font-size:8px; letter-spacing:4px; color:var(--accent); text-transform:uppercase; margin-bottom:22px; }
+  .footer-brand p { font-size:12px; line-height:1.9; color:var(--gray); font-weight:300; max-width:280px; }
+  .footer-social { display:flex; gap:12px; margin-top:28px; }
+  .social-btn {
+    width:38px; height:38px;
+    border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--gray); font-size:13px; text-decoration:none;
+    transition:all .3s;
+    background:var(--glass-bg);
+    backdrop-filter:blur(8px);
+  }
+  .social-btn:hover { background:var(--ink); color:var(--white); border-color:var(--ink); }
+
+  .footer-col h4 { font-size:9px; letter-spacing:4px; color:var(--accent); text-transform:uppercase; margin-bottom:26px; }
+  .footer-col ul { list-style:none; }
+  .footer-col li { margin-bottom:12px; }
+  .footer-col a { font-size:12px; color:var(--gray); text-decoration:none; font-weight:300; transition:color .3s; }
+  .footer-col a:hover { color:var(--ink); }
+
+  .footer-bottom {
+    padding-top:36px; border-top:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .footer-bottom p { font-size:11px; color:var(--gray-lt); font-weight:300; }
+  .footer-bottom span { color:var(--accent); }
+
+  /* ── SCROLL ANIMATIONS ── */
+  .reveal { opacity:0; transform:translateY(50px); transition:opacity .8s cubic-bezier(.25,.46,.45,.94), transform .8s cubic-bezier(.25,.46,.45,.94); }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+  .reveal-left { opacity:0; transform:translateX(-70px); transition:opacity .8s cubic-bezier(.25,.46,.45,.94), transform .8s cubic-bezier(.25,.46,.45,.94); }
+  .reveal-left.visible { opacity:1; transform:translateX(0); }
+  .reveal-right { opacity:0; transform:translateX(70px); transition:opacity .8s cubic-bezier(.25,.46,.45,.94), transform .8s cubic-bezier(.25,.46,.45,.94); }
+  .reveal-right.visible { opacity:1; transform:translateX(0); }
+  .reveal-scale { opacity:0; transform:scale(.92); transition:opacity .8s, transform .8s cubic-bezier(.25,.46,.45,.94); }
+  .reveal-scale.visible { opacity:1; transform:scale(1); }
+
+  .delay-1{transition-delay:.1s} .delay-2{transition-delay:.2s} .delay-3{transition-delay:.3s}
+  .delay-4{transition-delay:.4s} .delay-5{transition-delay:.5s} .delay-6{transition-delay:.6s}
+
+  .reveal.delay-2.visible { font-size: 20px; }
+
+  @keyframes fadeInLeft { from{opacity:0;transform:translateX(-36px)} to{opacity:1;transform:translateX(0)} }
+  @keyframes fadeInRight { from{opacity:0;transform:translateX(36px)} to{opacity:1;transform:translateX(0)} }
+
+  .particle {
+    position:fixed; pointer-events:none; border-radius:50%;
+    background:var(--accent); opacity:0;
+    transition:opacity .3s; z-index:9997;
+  }
+
+  /* ── MOBILE ── */
+  @media(max-width:900px){
+    nav{padding:18px 24px;}
+    .nav-links,.nav-cta{display:none;}
+    section{padding:80px 24px;}
+    .hero{padding:80px 24px 60px;}
+    .hero-title{font-size:54px;}
+    .hero-side,.hero-pill{display:none;}
+    .about{grid-template-columns:1fr;gap:50px;}
+    .products-grid{grid-template-columns:1fr;}
+    .product-card:nth-child(2),.product-card:nth-child(3){margin:0;}
+    .product-info{transform:none;}
+    .audience-grid{grid-template-columns:1fr;}
+    .features-inner{grid-template-columns:1fr;}
+    .features-visual{display:none;}
+    .cat-grid{grid-template-columns:repeat(3,1fr);}
+    .footer-grid{grid-template-columns:1fr 1fr;gap:36px;}
+    .footer-bottom{flex-direction:column;gap:14px;text-align:center;}
+    .cta-buttons{flex-direction:column;align-items:center;}
+    body{cursor:auto;}
+    .cursor,.cursor-ring{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-logo" >
+    <div><a href=""><img src="./kosmetic-distribuidora.png" class="nav-logo-img" alt="" ></a></div>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#nosotros">Nosotros</a></li>
+    <li><a href="#productos">Productos</a></li>
+    <li><a href="#para-quien">Para Quién</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+  <a href="#contacto" class="nav-cta">Distribución</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-orb-1"></div>
+  <div class="hero-orb-2"></div>
+  <div class="hero-dots"></div>
+  <div class="hero-pill">Nueva Colección 2026</div>
+  <div class="hero-content">
+    <div class="hero-tag">Cuidado Capilar Profesional</div>
+    <h1 class="hero-title">
+      El Arte<br>
+      <em>del Cabello</em>
+      <!-- <span>Professional Hair Care</span> -->
+    </h1>
+    <p class="hero-desc"> Formulaciones avanzadas que transforman cada servicio en una experiencia de lujo. Productos profesionales de alta gama para peluquerías, salones y estilistas.</p>
+    <div class="hero-actions">
+      <a href="#productos" class="btn-primary">Ver Catálogo</a>
+      <a href="#nosotros" class="btn-secondary">Conocé la marca &nbsp;→</a>
+    </div>
+  </div>
+  <div class="hero-side">
+    <div class="hero-side-line"></div>
+    <div class="hero-side-text">Scroll para descubrir</div>
+    <div class="hero-side-line"></div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track">
+    <div class="marquee-item">Tratamientos Capilares <span>✦</span></div>
+    <div class="marquee-item">Coloración Profesional <span>✦</span></div>
+    <div class="marquee-item">Hidratación Profunda <span>✦</span></div>
+    <div class="marquee-item">Keratinas Premium <span>✦</span></div>
+    <div class="marquee-item">Shampoos & Acondicionadores <span>✦</span></div>
+    <div class="marquee-item">Aceites & Serums <span>✦</span></div>
+    <div class="marquee-item">Botox Capilar <span>✦</span></div>
+    <div class="marquee-item">Tratamientos Capilares <span>✦</span></div>
+    <div class="marquee-item">Coloración Profesional <span>✦</span></div>
+    <div class="marquee-item">Hidratación Profunda <span>✦</span></div>
+    <div class="marquee-item">Keratinas Premium <span>✦</span></div>
+    <div class="marquee-item">Shampoos & Acondicionadores <span>✦</span></div>
+    <div class="marquee-item">Aceites & Serums <span>✦</span></div>
+    <div class="marquee-item">Botox Capilar <span>✦</span></div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="nosotros" style="padding:120px 60px;">
+  <div class="about">
+    <div class="about-visual reveal-left">
+      <div class="about-frame">
+        <div class="about-inner-grid"></div>
+      </div>
+      <div class="about-badge">
+        <div class="num">10+</div>
+        <div class="txt">Años de<br>Excelencia</div>
+      </div>
+      <div class="about-decoration"></div>
+      <div class="about-decoration-br"></div>
+    </div>
+    <div class="about-text">
+      <div class="section-tag reveal">Nuestra Historia</div>
+      <h2 class="section-title reveal delay-1">Profesionales<br><em>que confían</em><br>en nosotros.</h2>
+      <p class="reveal delay-2">Kosmetic AR nació con una misión clara: llevar lo mejor de la cosmética capilar profesional a cada peluquería, salón y estilista de Argentina. Somos distribuidores especializados en productos de alta gama que marcan la diferencia en cada servicio.</p>
+      <p class="reveal delay-3">Nuestra selección rigurosa de productos garantiza resultados visibles, formulaciones seguras y la satisfacción tanto del profesional como del cliente final. Trabajamos con las mejores marcas del mercado nacional e internacional.</p>
+      <div class="about-stats">
+        <div class="reveal delay-1"><div class="stat-num">500+</div><div class="stat-label">Salones asociados</div></div>
+        <div class="reveal delay-2"><div class="stat-num">50+</div><div class="stat-label">Productos premium</div></div>
+        <div class="reveal delay-3"><div class="stat-num">24h</div><div class="stat-label">Entrega en GBA</div></div>
+        <div class="reveal delay-4"><div class="stat-num">100%</div><div class="stat-label">Productos certificados</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section id="productos" class="products">
+  <div class="products-header">
+    <div class="section-tag reveal" style="justify-content:center;">Nuestro Catálogo</div>
+    <h2 class="section-title reveal delay-1">Líneas <em>Premium</em></h2>
+  </div>
+  <div class="products-grid">
+    <div class="product-card prod-1 reveal-left">
+      <div class="product-bg"></div>
+      <div class="product-num">01</div>
+      <div class="product-line"></div>
+      <div class="product-icon">K</div>
+      <div class="product-shape"></div>
+      <div class="product-info">
+        <div class="product-cat">Tratamiento</div>
+        <div class="product-name">Botox & Keratina</div>
+        <div class="product-desc">Fórmulas avanzadas para alisado y nutrición profunda. Resultados desde la primera aplicación.</div>
+      </div>
+    </div>
+    <div class="product-card prod-2 reveal delay-2">
+      <div class="product-bg"></div>
+      <div class="product-num">02</div>
+      <div class="product-line"></div>
+      <div class="product-icon">H</div>
+      <div class="product-shape"></div>
+      <div class="product-info">
+        <div class="product-cat">Hidratación</div>
+        <div class="product-name">Máscaras & Ampollas</div>
+        <div class="product-desc">Tratamientos de hidratación intensiva para cabello seco, dañado y con frizz.</div>
+      </div>
+    </div>
+    <div class="product-card prod-3 reveal-right delay-1">
+      <div class="product-bg"></div>
+      <div class="product-num">03</div>
+      <div class="product-line"></div>
+      <div class="product-icon">C</div>
+      <div class="product-shape"></div>
+      <div class="product-info">
+        <div class="product-cat">Color</div>
+        <div class="product-name">Coloración Profesional</div>
+        <div class="product-desc">Paleta completa de tonos con fórmulas que cuidan y protegen la fibra capilar.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AUDIENCE -->
+<section id="para-quien" class="audience">
+  <div class="audience-orb"></div>
+  <div class="audience-title">
+    <div class="section-tag reveal" style="justify-content:center;">Para Quién</div>
+    <h2 class="section-title reveal delay-1">Diseñado para<br><em>profesionales.</em></h2>
+  </div>
+  <div class="audience-grid">
+    <div class="audience-card reveal-left">
+      <div class="audience-icon">✂️</div>
+      <div class="audience-name">Peluqueros</div>
+      <div class="audience-desc">Herramientas y productos que elevan cada corte, color y tratamiento a un nivel de salón premium.</div>
+      <div class="audience-arrow">→</div>
+    </div>
+    <div class="audience-card reveal delay-2">
+      <div class="audience-icon">💇</div>
+      <div class="audience-name">Salones & Estilistas</div>
+      <div class="audience-desc">Líneas completas para equipar tu salón con los mejores productos y ofrecer resultados de excelencia.</div>
+      <div class="audience-arrow">→</div>
+    </div>
+    <div class="audience-card reveal-right delay-1">
+      <div class="audience-icon">🌿</div>
+      <div class="audience-name">Consumidor Final</div>
+      <div class="audience-desc">Accedé a productos profesionales para el cuidado diario de tu cabello desde la comodidad de tu hogar.</div>
+      <div class="audience-arrow">→</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+  <div class="features-inner">
+    <div>
+      <div class="section-tag reveal">¿Por qué elegirnos?</div>
+      <h2 class="section-title reveal delay-1">La diferencia<br><em>Kosmetic.</em></h2>
+      <div class="features-list" style="margin-top:48px;">
+        <div class="feature-item reveal delay-1">
+          <div class="feature-num">01</div>
+          <div>
+            <div class="feature-title">Distribución Nacional</div>
+            <div class="feature-text">Llegamos a todo el país con envíos rápidos y seguros. Buenos Aires, GBA y el interior en 24–72hs.</div>
+          </div>
+        </div>
+        <div class="feature-item reveal delay-2">
+          <div class="feature-num">02</div>
+          <div>
+            <div class="feature-title">Productos Certificados ANMAT</div>
+            <div class="feature-text">Toda nuestra línea cuenta con los registros y certificaciones exigidos por la normativa argentina.</div>
+          </div>
+        </div>
+        <div class="feature-item reveal delay-3">
+          <div class="feature-num">03</div>
+          <div>
+            <div class="feature-title">Asesoramiento Profesional</div>
+            <div class="feature-text">Nuestro equipo te guía para elegir el producto adecuado según las necesidades de cada servicio.</div>
+          </div>
+        </div>
+        <div class="feature-item reveal delay-4">
+          <div class="feature-num">04</div>
+          <div>
+            <div class="feature-title">Precios Mayoristas</div>
+            <div class="feature-text">Condiciones especiales para salones y profesionales. Compras en volumen con los mejores precios del mercado.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="features-visual reveal-right">
+      <div class="features-circle"><div class="features-dot fd1"></div><div class="features-dot fd2"></div><div class="features-dot fd3"></div><div class="features-dot fd4"></div></div>
+      <div class="features-circle"></div>
+      <div class="features-circle"></div>
+      <div class="features-logo-wrap">
+        <div class="features-logo">KAR</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="categories">
+  <div class="categories-title">
+    <div class="section-tag reveal" style="justify-content:center;">Categorías</div>
+    <h2 class="section-title reveal delay-1">Todo lo que<br><em>necesitás.</em></h2>
+  </div>
+  <div class="cat-grid">
+    <div class="cat-item reveal delay-1"><span class="cat-emoji">🧴</span><div class="cat-name">Shampoos</div></div>
+    <div class="cat-item reveal delay-2"><span class="cat-emoji">💆</span><div class="cat-name">Acondicionadores</div></div>
+    <div class="cat-item reveal delay-3"><span class="cat-emoji">✨</span><div class="cat-name">Keratinas</div></div>
+    <div class="cat-item reveal delay-4"><span class="cat-emoji">🎨</span><div class="cat-name">Coloración</div></div>
+    <div class="cat-item reveal delay-5"><span class="cat-emoji">🌿</span><div class="cat-name">Tratamientos</div></div>
+    <div class="cat-item reveal delay-6"><span class="cat-emoji">💎</span><div class="cat-name">Aceites Premium</div></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="testimonials-header">
+    <div class="section-tag reveal" style="justify-content:center;">Testimonios</div>
+    <h2 class="section-title reveal delay-1">Lo que dicen<br><em>los profesionales.</em></h2>
+  </div>
+  <div class="test-track">
+    <div class="test-card"><div class="test-stars">★★★★★</div><div class="test-quote">"Desde que trabajo con Kosmetic AR, la calidad de mis servicios mejoró notablemente. Mis clientes lo notan en el primer tratamiento."</div><div class="test-author"><div class="test-avatar">V</div><div><div class="test-name">Valeria Romero</div><div class="test-role">Peluquería VR Studio · CABA</div></div></div></div>
+    <div class="test-card"><div class="test-stars">★★★★★</div><div class="test-quote">"Los precios mayoristas son incomparables. Puedo ofrecer tratamientos premium sin disparar mis costos. Totalmente recomendado."</div><div class="test-author"><div class="test-avatar">M</div><div><div class="test-name">Marcos Suárez</div><div class="test-role">Salón Marks · Palermo</div></div></div></div>
+    <div class="test-card"><div class="test-stars">★★★★★</div><div class="test-quote">"La keratina que distribuyen es la mejor que probé en mi carrera. Resultados increíbles desde la primera sesión y dura meses."</div><div class="test-author"><div class="test-avatar">L</div><div><div class="test-name">Laura Fernández</div><div class="test-role">Estilista Independiente · GBA</div></div></div></div>
+    <div class="test-card"><div class="test-stars">★★★★★</div><div class="test-quote">"El asesoramiento del equipo es clave. Siempre me recomiendan exactamente lo que mis clientes necesitan. Atención de primera."</div><div class="test-author"><div class="test-avatar">C</div><div><div class="test-name">Carolina Bianchi</div><div class="test-role">Salón CB Hair · Recoleta</div></div></div></div>
+    <div class="test-card"><div class="test-stars">★★★★★</div><div class="test-quote">"Como consumidor final, me encanta poder acceder a productos profesionales. Noto la diferencia con lo que se vende en el super."</div><div class="test-author"><div class="test-avatar">A</div><div><div class="test-name">Agustina López</div><div class="test-role">Clienta Final · Buenos Aires</div></div></div></div>
+    <!-- duplicates for seamless loop -->
+    <div class="test-card"><div class="test-stars">★★★★★</div><div class="test-quote">"Desde que trabajo con Kosmetic AR, la calidad de mis servicios mejoró notablemente. Mis clientes lo notan en el primer tratamiento."</div><div class="test-author"><div class="test-avatar">V</div><div><div class="test-name">Valeria Romero</div><div class="test-role">Peluquería VR Studio · CABA</div></div></div></div>
+    <div class="test-card"><div class="test-stars">★★★★★</div><div class="test-quote">"Los precios mayoristas son incomparables. Puedo ofrecer tratamientos premium sin disparar mis costos. Totalmente recomendado."</div><div class="test-author"><div class="test-avatar">M</div><div><div class="test-name">Marcos Suárez</div><div class="test-role">Salón Marks · Palermo</div></div></div></div>
+    <div class="test-card"><div class="test-stars">★★★★★</div><div class="test-quote">"La keratina que distribuyen es la mejor que probé en mi carrera. Resultados increíbles desde la primera sesión y dura meses."</div><div class="test-author"><div class="test-avatar">L</div><div><div class="test-name">Laura Fernández</div><div class="test-role">Estilista Independiente · GBA</div></div></div></div>
+    <div class="test-card"><div class="test-stars">★★★★★</div><div class="test-quote">"El asesoramiento del equipo es clave. Siempre me recomiendan exactamente lo que mis clientes necesitan. Atención de primera."</div><div class="test-author"><div class="test-avatar">C</div><div><div class="test-name">Carolina Bianchi</div><div class="test-role">Salón CB Hair · Recoleta</div></div></div></div>
+    <div class="test-card"><div class="test-stars">★★★★★</div><div class="test-quote">"Como consumidor final, me encanta poder acceder a productos profesionales. Noto la diferencia con lo que se vende en el super."</div><div class="test-author"><div class="test-avatar">A</div><div><div class="test-name">Agustina López</div><div class="test-role">Clienta Final · Buenos Aires</div></div></div></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="contacto" class="cta-section">
+  <div class="cta-orb"></div>
+  <div class="cta-dots"></div>
+  <div class="section-tag reveal" style="justify-content:center;">Empezá hoy</div>
+  <h2 class="section-title reveal delay-1">¿Querés ser<br><em>distribuidor?</em></h2>
+  <p class="reveal delay-2">Sumá Kosmetic AR a tu negocio. Precios mayoristas, envíos a todo el país y el respaldo de una marca en constante crecimiento.</p>
+  <div class="cta-buttons reveal delay-3">
+    <a href="https://wa.me/5491100000000?text=Hola%20Kosmetic%20AR!%20Me%20interesa%20ser%20distribuidor." class="btn-primary-inv" target="_blank">Contactar por WhatsApp</a>
+    <a href="mailto:info@kosmeticar.com.ar" class="btn-outline-inv">Enviar Email</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="brand-name">Kosmetic</div>
+      <div class="brand-sub">AR · Professional Hair Care</div>
+      <p>Distribuidores especializados en productos capilares profesionales para peluqueros, estilistas y consumidores finales en toda Argentina.</p>
+      <div class="footer-social">
+        <a href="https://www.instagram.com/kosmetic.arg/" target="_blank" class="social-btn">📸</a>
+        <a href="https://wa.me/5491100000000" target="_blank" class="social-btn">💬</a>
+        <a href="mailto:info@kosmeticar.com.ar" class="social-btn">✉️</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Productos</h4>
+      <ul>
+        <li><a href="#">Shampoos</a></li>
+        <li><a href="#">Keratinas</a></li>
+        <li><a href="#">Coloración</a></li>
+        <li><a href="#">Tratamientos</a></li>
+        <li><a href="#">Aceites</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Para Quién</h4>
+      <ul>
+        <li><a href="#">Peluquerías</a></li>
+        <li><a href="#">Salones</a></li>
+        <li><a href="#">Estilistas</a></li>
+        <li><a href="#">Distribuidores</a></li>
+        <li><a href="#">Consumidor Final</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Empresa</h4>
+      <ul>
+        <li><a href="#">Nosotros</a></li>
+        <li><a href="#">Catálogo</a></li>
+        <li><a href="#">Distribución</a></li>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Contacto</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 <span>Kosmetic AR</span>. Todos los derechos reservados.</p>
+    <p>Hecho con <span>✦</span> en Argentina</p>
+  </div>
+</footer>
+
+<script>
+  const cursor = document.getElementById('cursor');
+  const cursorRing = document.getElementById('cursorRing');
+  let mouseX=0,mouseY=0,ringX=0,ringY=0;
+
+  document.addEventListener('mousemove',(e)=>{
+    mouseX=e.clientX; mouseY=e.clientY;
+    cursor.style.left=mouseX+'px'; cursor.style.top=mouseY+'px';
+  });
+  function animateRing(){
+    ringX+=(mouseX-ringX)*.12; ringY+=(mouseY-ringY)*.12;
+    cursorRing.style.left=ringX+'px'; cursorRing.style.top=ringY+'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a,button,.product-card,.audience-card,.cat-item').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{ cursor.style.width='18px'; cursor.style.height='18px'; cursorRing.style.width='54px'; cursorRing.style.height='54px'; cursorRing.style.opacity='.9'; });
+    el.addEventListener('mouseleave',()=>{ cursor.style.width='10px'; cursor.style.height='10px'; cursorRing.style.width='34px'; cursorRing.style.height='34px'; cursorRing.style.opacity='.6'; });
+  });
+
+  const nav=document.getElementById('nav');
+  window.addEventListener('scroll',()=>{ nav.classList.toggle('scrolled',window.scrollY>60); });
+
+  const reveals=document.querySelectorAll('.reveal,.reveal-left,.reveal-right,.reveal-scale');
+  const observer=new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{ if(entry.isIntersecting) entry.target.classList.add('visible'); });
+  },{threshold:.1,rootMargin:'0px 0px -50px 0px'});
+  reveals.forEach(el=>observer.observe(el));
+
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click',e=>{
+      const target=document.querySelector(a.getAttribute('href'));
+      if(target){ e.preventDefault(); target.scrollIntoView({behavior:'smooth'}); }
+    });
+  });
+
+  document.addEventListener('click',(e)=>{
+    for(let i=0;i<5;i++){
+      const p=document.createElement('div');
+      p.className='particle';
+      const size=Math.random()*5+2;
+      p.style.cssText=`width:${size}px;height:${size}px;left:${e.clientX}px;top:${e.clientY}px;opacity:.7;`;
+      document.body.appendChild(p);
+      const angle=(Math.random()*360)*Math.PI/180;
+      const dist=36+Math.random()*50;
+      p.animate([
+        {transform:'translate(-50%,-50%) scale(1)',opacity:.7},
+        {transform:`translate(calc(-50% + ${Math.cos(angle)*dist}px),calc(-50% + ${Math.sin(angle)*dist}px)) scale(0)`,opacity:0}
+      ],{duration:500+Math.random()*300,easing:'cubic-bezier(.25,.46,.45,.94)'}).onfinish=()=>p.remove();
+    }
+  });
+</script>
+</body>
+</html>
