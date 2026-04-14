@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   :root {
     --ink:        #000000;
@@ -116,12 +117,28 @@ s
   }
   .nav-cta:hover { background:var(--ink2); }
 
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 4px;
+  }
+  .hamburger span {
+    width: 25px;
+    height: 3px;
+    background: var(--ink);
+    transition: all 0.3s;
+  }
+  .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(7px, -6px); }
+
   /* ── HERO ── */
   .hero {
     min-height:100vh;
     display:flex; align-items:center;
     position:relative; overflow:hidden;
-    padding:0 60px;
+    padding:100px 60px 0;
     background: var(--white);
   }
   
@@ -174,7 +191,7 @@ s
 
   .hero-title {
     font-family:'Josefin Sans', Josefin Sans, serif;
-    font-size:clamp(60px,8vw,110px);
+    font-size:clamp(40px,8vw,110px);
     font-weight:300; line-height:.95;
     color:var(--ink); letter-spacing:-2px;
     animation: fadeInLeft .8s .4s both;
@@ -705,7 +722,10 @@ s
   /* ── MOBILE ── */
   @media(max-width:900px){
     nav{padding:18px 24px;}
-    .nav-links,.nav-cta{display:none;}
+    .nav-links{display:none; flex-direction:column; position:absolute; top:100%; left:0; right:0; background:var(--white); padding:20px; gap:20px; box-shadow:0 4px 20px rgba(0,0,0,.1);}
+    .nav-links.open{display:flex;}
+    .nav-cta{display:none;}
+    .hamburger{display:flex;}
     section{padding:80px 24px;}
     .hero{padding:80px 24px 60px;}
     .hero-title{font-size:54px;}
@@ -736,13 +756,18 @@ s
   <div class="nav-logo" >
     <div><a href=""><img src="./kosmetic-distribuidora.png" class="nav-logo-img" alt="" ></a></div>
   </div>
-  <ul class="nav-links">
+  <ul class="nav-links" id="nav-links">
     <li><a href="#nosotros">Nosotros</a></li>
     <li><a href="#productos">Productos</a></li>
     <li><a href="#para-quien">Para Quién</a></li>
     <li><a href="#contacto">Contacto</a></li>
   </ul>
   <a href="#contacto" class="nav-cta">Distribución</a>
+  <div class="hamburger" id="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
 </nav>
 
 <!-- HERO -->
@@ -760,7 +785,7 @@ s
     </h1>
     <p class="hero-desc"> Formulaciones avanzadas que transforman cada servicio en una experiencia de lujo. Productos profesionales de alta gama para peluquerías, salones y estilistas.</p>
     <div class="hero-actions">
-      <a href="#productos" class="btn-primary">Ver Catálogo</a>
+      <a href="javascript:void(0)" class="btn-primary" onclick="downloadCatalog('./catalog.pdf')">Ver Catálogo</a>
       <a href="#nosotros" class="btn-secondary">Conocé la marca &nbsp;→</a>
     </div>
   </div>
@@ -1030,7 +1055,7 @@ s
       <h4>Empresa</h4>
       <ul>
         <li><a href="#">Nosotros</a></li>
-        <li><a href="#">Catálogo</a></li>
+        <li><a href="javascript:void(0)" onclick="downloadCatalog()">Catálogo</a></li>
         <li><a href="#">Distribución</a></li>
         <li><a href="#">Instagram</a></li>
         <li><a href="#">Contacto</a></li>
@@ -1067,6 +1092,13 @@ s
   const nav=document.getElementById('nav');
   window.addEventListener('scroll',()=>{ nav.classList.toggle('scrolled',window.scrollY>60); });
 
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('nav-links');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    navLinks.classList.toggle('open');
+  });
+
   const reveals=document.querySelectorAll('.reveal,.reveal-left,.reveal-right,.reveal-scale');
   const observer=new IntersectionObserver((entries)=>{
     entries.forEach(entry=>{ if(entry.isIntersecting) entry.target.classList.add('visible'); });
@@ -1095,6 +1127,32 @@ s
       ],{duration:500+Math.random()*300,easing:'cubic-bezier(.25,.46,.45,.94)'}).onfinish=()=>p.remove();
     }
   });
+
+  function downloadCatalog() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.setFontSize(20);
+    doc.text('Catálogo de Productos - Kosmetic AR', 20, 30);
+    let y = 50;
+    const products = [
+      { title: 'Botox & Keratina', category: 'Tratamiento', desc: 'Fórmulas avanzadas para alisado y nutrición profunda. Resultados desde la primera aplicación.', price: '$5000' },
+      { title: 'Máscaras & Ampollas', category: 'Hidratación', desc: 'Tratamientos de hidratación intensiva para cabello seco, dañado y con frizz.', price: '$3000' },
+      { title: 'Coloración Profesional', category: 'Color', desc: 'Paleta completa de tonos con fórmulas que cuidan y protegen la fibra capilar.', price: '$4000' }
+    ];
+    products.forEach(product => {
+      doc.setFontSize(16);
+      doc.text(product.title, 20, y);
+      y += 10;
+      doc.setFontSize(12);
+      doc.text(product.category, 20, y);
+      y += 10;
+      doc.text(product.desc, 20, y, { maxWidth: 170 });
+      y += 20;
+      doc.text('Precio: ' + product.price, 20, y);
+      y += 20;
+    });
+    doc.save('catalogo.pdf');
+  }
 </script>
 </body>
 </html>
